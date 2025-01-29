@@ -105,9 +105,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     })
 
     # Request phone number
-    button = [[KeyboardButton("Share Phone Number", request_contact=True)]]
+    button = [[KeyboardButton("Register", request_contact=True)]]
     reply_markup = ReplyKeyboardMarkup(button, one_time_keyboard=True)
-    await update.message.reply_text("Welcome! Please share your phone number:", reply_markup=reply_markup)
+    await update.message.reply_text("Welcome! Please register yourself:", reply_markup=reply_markup)
 
 async def handle_contact(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.contact:
@@ -116,9 +116,9 @@ async def handle_contact(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         # Save phone number in MongoDB
         users_collection.update_one({"chat_id": chat_id}, {"$set": {"phone_number": phone_number}})
-        await update.message.reply_text(f"Thank you! Your phone number {phone_number} has been saved.")
+        await update.message.reply_text(f"Thank you! You can access the chatbot now type 'Hello' to start chatting.")
     else:
-        await update.message.reply_text("Please share your contact using the button.")
+        await update.message.reply_text("Please register using the button.")
 
 def get_gemini_response(input, image):
     if input != "":
@@ -233,7 +233,10 @@ async def gemini_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
             bot_response = response.text
 
             # Reply to the user with the extracted response
-            await update.message.reply_text(bot_response)
+            # Split the response into chunks of 4000 characters
+            max_length = 4000
+            for i in range(0, len(bot_response), max_length):
+                await update.message.reply_text(bot_response[i:i + max_length])
 
             # Save chat history in MongoDB
             chat_collection.insert_one({
