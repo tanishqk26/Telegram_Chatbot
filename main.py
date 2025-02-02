@@ -13,6 +13,14 @@ from datetime import datetime
 import requests
 from crewai import Agent, Task, Crew
 from bs4 import BeautifulSoup
+from flask import Flask
+from threading import Thread
+
+app = Flask(__name__)
+
+# Render provides a PORT environment variable
+port = int(os.environ.get("PORT", 8080))
+
 
 # Load environment variables
 load_dotenv()
@@ -271,9 +279,17 @@ def main():
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, gemini_chat))
     application.add_handler(MessageHandler(filters.PHOTO, gemini_chat))
     application.add_handler(MessageHandler(filters.Document.ALL, gemini_chat))# Handle photo messages
+      # Function to run the Flask app
+    def run_flask():
+        app.run(host="0.0.0.0", port=port)
 
-    # Run the bot
+    # Start Flask app in a separate thread
+    flask_thread = Thread(target=run_flask)
+    flask_thread.start()
+
+    # Run the Telegram bot
     application.run_polling()
 
 if __name__ == "__main__":
     main()
+
