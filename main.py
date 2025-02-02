@@ -22,8 +22,9 @@ app = Flask(__name__)
 port = int(os.environ.get("PORT", 8080))
 
 
-# Load environment variables
-load_dotenv()
+@app.route('/')
+def home():
+    return "Welcome to the Telegram Bot Flask Server!"
 
 load_dotenv()
 
