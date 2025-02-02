@@ -4,6 +4,7 @@ from pymongo import MongoClient
 import google.generativeai as genai
 from datetime import datetime
 import io
+import re
 import os
 from dotenv import load_dotenv
 from PIL import Image
@@ -125,7 +126,13 @@ def get_gemini_response(input, image):
         response = model.generate_content(["Describe the given image", image])
     else:
         response = model.generate_content(image)
-    return response.text
+    return clean_markdown(response.text)
+
+
+
+def clean_markdown(text):
+    return re.sub(r"[*_]+", "", text)  # Removes *, **, ***, _
+
 
 from pdf2image import convert_from_path, convert_from_bytes
 

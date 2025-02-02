@@ -1,6 +1,6 @@
 
 
-# Telegram Bot (FOR BreakoutAI)
+# Solace Bot (The Telegram Bot)  
 
 This is a Telegram bot built using Python, leveraging the `python-telegram-bot` library, the `Gemini API` for image and text generation, and the `Google Custom Search API` for web search integration. It stores user data and chat history in a MongoDB database and processes image/PDF files for description generation.
 
